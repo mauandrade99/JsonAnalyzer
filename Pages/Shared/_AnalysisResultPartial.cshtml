@@ -1,0 +1,25 @@
+@model AnalisadorJson.Pages.IndexModel
+
+<div class="card mt-4 bg-light">
+    <div class="card-header">
+        <h3>Resultados da Análise</h3>
+    </div>
+    <div class="card-body">
+        <h4 class="text-success">Análise Concluída!</h4>
+        <p>Tempo de processamento: <strong>@Model.Result.ElapsedMilliseconds.ToString("F2") ms</strong></p>
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Total de ocorrências da propriedade '<strong>@Model.PropertyNameToCount</strong>' encontradas:
+                <span class="badge bg-info rounded-pill fs-6">@Model.Result.TotalPropertiesFound</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center text-success">
+                Ocorrências onde o valor é '<strong>@(Model.PropertyValueToMatch.Equals("null", StringComparison.OrdinalIgnoreCase) ? "[nulo]" : string.IsNullOrEmpty(Model.PropertyValueToMatch) ? "[vazio]" : Model.PropertyValueToMatch)</strong>':
+                <span class="badge bg-success rounded-pill fs-6">@Model.Result.MatchingItems</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center text-secondary">
+                Ocorrências com <strong>outros valores</strong>:
+                <span class="badge bg-secondary rounded-pill fs-6">@Model.Result.NonMatchingItems</span>
+            </li>
+        </ul>
+    </div>
+</div>

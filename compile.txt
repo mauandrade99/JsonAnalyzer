@@ -1,0 +1,17 @@
+cd\dotnet\analisadorjson
+dotnet publish -c Release -r win-x64 --self-contained true --output "C:\dotnet\release\JsonAnalyzer"
+
+cd\dotnet\analisadorjson
+git init
+git remote add origin https://github.com/mauandrade99/JsonAnalyzer
+
+
+
+cd\dotnet\analisadorjson
+cd\dotnet\ml\analiseML
+git init
+git add .
+git commit -m "JsonAnalyzer release 1.00"
+git branch -M main
+git push -u origin main
+

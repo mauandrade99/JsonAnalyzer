@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "qr5WYRB92fKj3cWwA6Krs28gCOwD5V00NjBl1E5vICxDjf6uLrNHeuLVaGzSttoGiVSunGpddnnao8744qVVHw==",
+  "success": true,
+  "projectFilePath": "C:\\dotnet\\AnalisadorJson\\AnalisadorJson.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Users\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
