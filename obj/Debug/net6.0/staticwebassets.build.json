@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "OJ4H+5IFJIBX7FokoYrbuMEqkJTJcvkJY0VQZEDP59Y=",
+  "Hash": "JChR4qG5XahtVXX0z2YMiDTZnFhWpt8b51i1diUrG58=",
   "Source": "AnalisadorJson",
   "BasePath": "_content/AnalisadorJson",
   "Mode": "Default",
@@ -66,6 +66,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\site.css"
+    },
+    {
+      "Identity": "C:\\dotnet\\AnalisadorJson\\wwwroot\\css\\vanilla-jsoneditor.css",
+      "SourceId": "AnalisadorJson",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\dotnet\\AnalisadorJson\\wwwroot\\",
+      "BasePath": "_content/AnalisadorJson",
+      "RelativePath": "css/vanilla-jsoneditor.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\vanilla-jsoneditor.css"
     },
     {
       "Identity": "C:\\dotnet\\AnalisadorJson\\wwwroot\\favicon.ico",
@@ -1069,6 +1086,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\jquery\\LICENSE.txt"
+    },
+    {
+      "Identity": "C:\\dotnet\\AnalisadorJson\\wwwroot\\lib\\vanilla-jsoneditor\\standalone.js",
+      "SourceId": "AnalisadorJson",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\dotnet\\AnalisadorJson\\wwwroot\\",
+      "BasePath": "_content/AnalisadorJson",
+      "RelativePath": "lib/vanilla-jsoneditor/standalone.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\lib\\vanilla-jsoneditor\\standalone.js"
     }
   ]
 }

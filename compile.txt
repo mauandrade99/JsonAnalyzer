@@ -8,7 +8,6 @@ git remote add origin https://github.com/mauandrade99/JsonAnalyzer
 
 
 cd\dotnet\analisadorjson
-cd\dotnet\ml\analiseML
 git init
 git add .
 git commit -m "JsonAnalyzer release 1.00"

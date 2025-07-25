@@ -26,3 +26,6 @@ C:\dotnet\AnalisadorJson\obj\Debug\net6.0\AnalisadorJson.genruntimeconfig.cache
 C:\dotnet\AnalisadorJson\obj\Debug\net6.0\ref\AnalisadorJson.dll
 C:\dotnet\AnalisadorJson\bin\Debug\net6.0\Newtonsoft.Json.dll
 C:\dotnet\AnalisadorJson\obj\Debug\net6.0\AnalisadorJson.csproj.CopyComplete
+C:\dotnet\AnalisadorJson\bin\Debug\net6.0\web.config
+C:\dotnet\AnalisadorJson\bin\Debug\net6.0\package-lock.json
+C:\dotnet\AnalisadorJson\bin\Debug\net6.0\package.json

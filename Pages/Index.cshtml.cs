@@ -25,76 +25,77 @@ namespace AnalisadorJson.Pages
         public string PropertyValueToMatch { get; set; }
 
         public AnalysisResult Result { get; private set; }
+        
 
         public void OnGet() { }
 
         public IActionResult OnPost()
-{
-    PropertyValueToMatch ??= string.Empty;
-
-    if (!ModelState.IsValid)
-    {
-        // Se a validação falhar, retornamos um Bad Request que o JavaScript pode tratar.
-        return BadRequest(ModelState);
-    }
-
-    var stopwatch = Stopwatch.StartNew();
-    long matchingItems = 0;
-    long nonMatchingItems = 0;
-
-    try
-    {
-        using var stream = JsonFile.OpenReadStream();
-        using var streamReader = new StreamReader(stream);
-        using var jsonReader = new JsonTextReader(streamReader);
-
-        while (jsonReader.Read())
         {
-            if (jsonReader.TokenType == JsonToken.PropertyName && (string)jsonReader.Value == PropertyNameToCount)
+            PropertyValueToMatch ??= string.Empty;
+
+            if (!ModelState.IsValid)
             {
-                jsonReader.Read();
+                // Se a validação falhar, retornamos um Bad Request que o JavaScript pode tratar.
+                return BadRequest(ModelState);
+            }
 
-                bool isMatch;
-                if (PropertyValueToMatch.Equals("null", StringComparison.OrdinalIgnoreCase))
-                {
-                    isMatch = (jsonReader.TokenType == JsonToken.Null);
-                }
-                else
-                {
-                    string jsonValueAsString = jsonReader.Value?.ToString() ?? "";
-                    isMatch = jsonValueAsString.Equals(PropertyValueToMatch, StringComparison.OrdinalIgnoreCase);
-                }
+            var stopwatch = Stopwatch.StartNew();
+            long matchingItems = 0;
+            long nonMatchingItems = 0;
 
-                if (isMatch)
+            try
+            {
+                using var stream = JsonFile.OpenReadStream();
+                using var streamReader = new StreamReader(stream);
+                using var jsonReader = new JsonTextReader(streamReader);
+
+                while (jsonReader.Read())
                 {
-                    matchingItems++;
-                }
-                else
-                {
-                    nonMatchingItems++;
+                    if (jsonReader.TokenType == JsonToken.PropertyName && (string)jsonReader.Value == PropertyNameToCount)
+                    {
+                        jsonReader.Read();
+
+                        bool isMatch;
+                        if (PropertyValueToMatch.Equals("null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            isMatch = (jsonReader.TokenType == JsonToken.Null);
+                        }
+                        else
+                        {
+                            string jsonValueAsString = jsonReader.Value?.ToString() ?? "";
+                            isMatch = jsonValueAsString.Equals(PropertyValueToMatch, StringComparison.OrdinalIgnoreCase);
+                        }
+
+                        if (isMatch)
+                        {
+                            matchingItems++;
+                        }
+                        else
+                        {
+                            nonMatchingItems++;
+                        }
+                    }
                 }
             }
+            catch (JsonReaderException ex)
+            {
+                ModelState.AddModelError("JsonFile", $"Erro fatal de JSON na Linha {ex.LineNumber}, Posição {ex.LinePosition}: {ex.Message}.");
+                return BadRequest(ModelState);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Ocorreu um erro inesperado: {ex.Message}");
+                return BadRequest(ModelState);
+            }
+
+            stopwatch.Stop();
+            
+            Result = new AnalysisResult(matchingItems, nonMatchingItems, stopwatch.Elapsed.TotalMilliseconds);
+
+            // ***** MUDANÇA PRINCIPAL *****
+            // Em vez de retornar a página inteira, retornamos apenas o HTML da partial view.
+            return Partial("Shared/_AnalysisResultPartial", this);
         }
-    }
-    catch (JsonReaderException ex)
-    {
-        ModelState.AddModelError("JsonFile", $"Erro fatal de JSON na Linha {ex.LineNumber}, Posição {ex.LinePosition}: {ex.Message}.");
-        return BadRequest(ModelState);
-    }
-    catch (Exception ex)
-    {
-        ModelState.AddModelError("", $"Ocorreu um erro inesperado: {ex.Message}");
-        return BadRequest(ModelState);
-    }
-
-    stopwatch.Stop();
-    
-    Result = new AnalysisResult(matchingItems, nonMatchingItems, stopwatch.Elapsed.TotalMilliseconds);
-
-    // ***** MUDANÇA PRINCIPAL *****
-    // Em vez de retornar a página inteira, retornamos apenas o HTML da partial view.
-    return Partial("Shared/_AnalysisResultPartial", this);
-}
     }
 
     public record AnalysisResult(long MatchingItems, long NonMatchingItems, double ElapsedMilliseconds)

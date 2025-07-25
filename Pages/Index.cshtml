@@ -4,6 +4,7 @@
     ViewData["Title"] = "Analisador Global de Propriedades JSON";
 }
 
+
 <div class="text-center">
     <h1 class="display-4">Analisador Global de Propriedades JSON</h1>
     <p class="lead">Faça o upload de um arquivo JSON e conte ocorrências de qualquer propriedade em todo o documento.</p>
@@ -11,91 +12,198 @@
 
 <div class="row">
     <div class="col-md-8 offset-md-2">
-        <!-- Adicionamos um ID ao formulário para o JavaScript encontrá-lo -->
-        <form id="analysis-form" method="post" enctype="multipart/form-data">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Configuração da Análise</h3>
-                </div>
-                <div class="card-body">
-                    <!-- Div para mostrar erros de validação -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Configuração da Análise</h3>
+            </div>
+            <div class="card-body">
+                <form id="analysis-form" method="post" enctype="multipart/form-data">
+                    
                     <div id="validation-summary" class="text-danger mb-3"></div>
 
                     <div class="mb-3">
                         <label asp-for="JsonFile" class="form-label"><strong>1. Selecione o arquivo JSON:</strong></label>
-                        <input asp-for="JsonFile" type="file" class="form-control" required>
+                        <input asp-for="JsonFile" type="file" class="form-control">
+                        <span asp-validation-for="JsonFile" class="text-danger"></span>
                     </div>
+
                     <hr />
+
                     <div class="mb-3">
                         <label asp-for="PropertyNameToCount" class="form-label"><strong>2. Propriedade a ser Contada (Obrigatório):</strong></label>
-                        <input asp-for="PropertyNameToCount" class="form-control" placeholder="Ex: status, video_id, etc." required value="status">
+                        <input asp-for="PropertyNameToCount" class="form-control" placeholder="Ex: status, video_id, etc." value="status">
+                        <span asp-validation-for="PropertyNameToCount" class="text-danger"></span>
                     </div>
+                    
                     <div class="mb-3">
                         <label asp-for="PropertyValueToMatch" class="form-label"><strong>3. Valor para o Match (Opcional):</strong></label>
                         <input asp-for="PropertyValueToMatch" class="form-control" placeholder="Ex: active" value="active">
                         <small class="form-text text-muted">Use <strong>null</strong> para buscar valores nulos, ou deixe em branco para strings vazias.</small>
+                        <span asp-validation-for="PropertyValueToMatch" class="text-danger"></span>
                     </div>
-                    <div class="d-grid mt-4">
-                        <button id="submit-button" type="submit" class="btn btn-primary btn-lg">Analisar Arquivo</button>
-                    </div>
-                </div>
-            </div>
-        </form>
 
-        <!-- Div vazia onde os resultados serão injetados pelo JavaScript -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <!-- Botão NOVO para abrir o visualizador -->
+                        <button id="view-tree-button" type="button" class="btn btn-secondary" data-bs-toggle="offcanvas" data-bs-target="#jsonOffcanvas">
+                            <i class="bi bi-file-earmark-code"></i> Ver Árvore (Arquivos Pequenos)
+                        </button>
+                        <!-- Botão antigo para análise -->
+                        <button id="submit-button" type="submit" class="btn btn-primary">Analisar Arquivo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div id="result-container" class="mt-4"></div>
     </div>
 </div>
 
+
+<!-- === ESTRUTURA DO PAINEL LATERAL (OFFCANVAS) === -->
+<div class="offcanvas offcanvas-end offcanvas-custom-width" tabindex="-1" id="jsonOffcanvas" aria-labelledby="jsonOffcanvasLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="jsonOffcanvasLabel">Visualizador de JSON</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <p>Visualizando a estrutura do arquivo selecionado. Expanda os nós para explorar.</p>
+    <hr>
+    <!-- O visualizador em árvore será injetado aqui pelo JavaScript -->
+    <div id="json-tree-container">
+        <small class="text-muted">Selecione um arquivo e clique em "Ver Árvore" para começar.</small>
+    </div>
+  </div>
+</div>
+
+
 @section Scripts {
+
+   
+    <!-- === SCRIPT DE ANÁLISE (AJAX) - CORRIGIDO === -->
     <script>
+
         document.getElementById('analysis-form').addEventListener('submit', async function (event) {
             // 1. Previne o recarregamento da página
             event.preventDefault();
 
             const form = event.target;
             const button = document.getElementById('submit-button');
-            const resultContainer = document.getElementById('result-container');
-            const validationSummary = document.getElementById('validation-summary');
+            // Referência correta ao container de resultados
+            const resultContainer = document.getElementById('result-container'); 
+            // Referência correta ao container de erros de validação
+            const validationSummary = document.getElementById('validation-summary'); 
 
             // Limpa resultados e erros anteriores
             resultContainer.innerHTML = '';
             validationSummary.innerHTML = '';
             
-            // Feedback visual para o usuário
             button.disabled = true;
             button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Analisando...';
 
             try {
-                // 2. Cria os dados do formulário para enviar
                 const formData = new FormData(form);
-
-                // 3. Envia os dados para o servidor "nos bastidores"
                 const response = await fetch(form.action, {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        // Necessário para o ASP.NET Core validar a requisição
                         'RequestVerificationToken': form.querySelector('input[name="__RequestVerificationToken"]').value
                     }
                 });
 
                 if (response.ok) {
-                    // 4. Se a resposta for OK, pega o HTML parcial e insere na página
                     const resultHtml = await response.text();
+                    // Injeta o HTML no container correto
                     resultContainer.innerHTML = resultHtml;
                 } else {
-                    // Se a resposta for um erro (ex: 400 Bad Request), exibe a mensagem
-                    validationSummary.innerHTML = 'Ocorreu um erro. Verifique se todos os campos obrigatórios estão preenchidos e se o arquivo é válido.';
+                    const errorData = await response.json();
+                    let errorHtml = '<ul>';
+                    for (const key in errorData) {
+                        if (errorData.hasOwnProperty(key)) {
+                            errorData[key].forEach(errorMessage => {
+                                errorHtml += `<li>${errorMessage}</li>`;
+                            });
+                        }
+                    }
+                    errorHtml += '</ul>';
+                    // Injeta os erros no container de validação correto
+                    validationSummary.innerHTML = errorHtml;
                 }
             } catch (error) {
                 validationSummary.innerHTML = 'Erro de rede ou falha na comunicação com o servidor.';
                 console.error('Fetch error:', error);
             } finally {
-                // Reabilita o botão, independentemente do resultado
                 button.disabled = false;
                 button.innerHTML = 'Analisar Arquivo';
             }
         });
+    </script>
+    
+    <!-- === SCRIPT DO VISUALIZADOR DE ÁRVORE - JÁ ESTAVA CORRETO, MAS INCLUÍDO PARA COMPLETUDE === -->
+    <script type="module">
+        import { createJSONEditor } from '@Url.Content("~/lib/vanilla-jsoneditor/standalone.js")';
+
+        const viewTreeButton = document.getElementById('view-tree-button');
+        if(viewTreeButton) {
+            viewTreeButton.addEventListener('click', function() {
+                const fileInput = document.getElementById('JsonFile');
+                const treeContainer = document.getElementById('json-tree-container');
+
+                
+                // 1. Verifica se um arquivo foi selecionado.
+                if (fileInput.files.length === 0) {
+                    treeContainer.innerHTML = '<div class="alert alert-warning">Por favor, selecione um arquivo primeiro.</div>';
+                    return; // Para a execução aqui.
+                }
+                
+                const file = fileInput.files[0];
+                
+                // 2. Verifica o tamanho do arquivo para segurança.
+               // const maxSizeInBytes = 100 * 1024 * 1024; // 5 MB
+               // if (file.size > maxSizeInBytes) {
+                //    treeContainer.innerHTML = `<div class="alert alert-danger">O arquivo é muito grande (${(file.size / 1024 / 1024).toFixed(2)} MB) para ser visualizado. </div>`;
+                //    return; // Para a execução aqui.
+                //}
+
+                // 3. Mostra o feedback de carregamento, substituindo o texto padrão.
+                treeContainer.innerHTML = '<div class="d-flex align-items-center"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><strong class="ms-2">Lendo e processando o arquivo...</strong></div>';
+
+                // 4. Cria o leitor de arquivos do navegador.
+                const reader = new FileReader();
+
+                // 5. Define o que acontece QUANDO a leitura for concluída com sucesso.
+                reader.onload = function(event) {
+                    try {
+                        const fileContent = event.target.result;
+                        const jsonData = JSON.parse(fileContent);
+
+                         
+                        
+                        // Limpa o container antes de adicionar o editor.
+                        treeContainer.innerHTML = '';
+                        
+                        // Cria a instância do editor com a sintaxe correta e final.
+                        const editor = createJSONEditor({
+                            target: treeContainer,
+                            props: {
+                                content: { json: jsonData },
+                                readOnly: true // Garante que seja apenas um visualizador.
+                            }
+                        });
+                        
+                    } catch (error) {
+                        // Lida com erros de JSON inválido.
+                        treeContainer.innerHTML = `<div class="alert alert-danger"><strong>Erro ao processar o JSON:</strong><br>${error.message}</div>`;
+                    }
+                };
+
+                // 6. Define o que acontece se a leitura do arquivo falhar.
+                reader.onerror = function() {
+                    treeContainer.innerHTML = `<div class="alert alert-danger">Ocorreu um erro ao tentar ler o arquivo.</div>`;
+                };
+                
+                // 7. Inicia a operação de leitura do arquivo.
+                reader.readAsText(file);
+            });
+        }
     </script>
 }

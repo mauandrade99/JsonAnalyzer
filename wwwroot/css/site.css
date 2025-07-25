@@ -16,3 +16,9 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.offcanvas-custom-width {
+        --bs-offcanvas-width: 60vw; 
+        min-width: 600px;
+        max-width: 1000px; 
+    }
