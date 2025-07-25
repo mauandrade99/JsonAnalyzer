@@ -43,40 +43,63 @@ namespace AnalisadorJson.Pages
             long matchingItems = 0;
             long nonMatchingItems = 0;
 
-            try
+try
+{
+    using var stream = JsonFile.OpenReadStream();
+    using var streamReader = new StreamReader(stream);
+    using var jsonReader = new JsonTextReader(streamReader);
+
+    // --- INÍCIO DA CORREÇÃO ---
+    const char separator = '|';
+    bool hasMultipleValues = PropertyValueToMatch.Contains(separator);
+
+    // Prepara a lista de busca se houver múltiplos valores.
+    var searchValues = hasMultipleValues 
+        ? new HashSet<string>(PropertyValueToMatch.Split(separator).Select(v => v.Trim()), StringComparer.OrdinalIgnoreCase)
+        : null;
+
+    // A busca global permanece a mesma.
+    while (jsonReader.Read())
+    {
+        if (jsonReader.TokenType == JsonToken.PropertyName && (string)jsonReader.Value == PropertyNameToCount)
+        {
+            jsonReader.Read(); // Avança para o valor.
+
+            bool isMatch = false;
+
+            // Lógica de comparação aprimorada.
+            if (hasMultipleValues)
             {
-                using var stream = JsonFile.OpenReadStream();
-                using var streamReader = new StreamReader(stream);
-                using var jsonReader = new JsonTextReader(streamReader);
-
-                while (jsonReader.Read())
+                // Para múltiplos valores, incluindo "null" se estiver na lista.
+                string jsonValueAsString = (jsonReader.TokenType == JsonToken.Null) ? "null" : (jsonReader.Value?.ToString() ?? "");
+                isMatch = searchValues.Contains(jsonValueAsString);
+                
+            }
+            else // Lógica para valor único (a mesma de antes, mas mais limpa).
+            {
+                if (PropertyValueToMatch.Equals("null", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (jsonReader.TokenType == JsonToken.PropertyName && (string)jsonReader.Value == PropertyNameToCount)
-                    {
-                        jsonReader.Read();
-
-                        bool isMatch;
-                        if (PropertyValueToMatch.Equals("null", StringComparison.OrdinalIgnoreCase))
-                        {
-                            isMatch = (jsonReader.TokenType == JsonToken.Null);
-                        }
-                        else
-                        {
-                            string jsonValueAsString = jsonReader.Value?.ToString() ?? "";
-                            isMatch = jsonValueAsString.Equals(PropertyValueToMatch, StringComparison.OrdinalIgnoreCase);
-                        }
-
-                        if (isMatch)
-                        {
-                            matchingItems++;
-                        }
-                        else
-                        {
-                            nonMatchingItems++;
-                        }
-                    }
+                    isMatch = (jsonReader.TokenType == JsonToken.Null);
+                }
+                else
+                {
+                    string jsonValueAsString = jsonReader.Value?.ToString() ?? "";
+                    isMatch = jsonValueAsString.Equals(PropertyValueToMatch, StringComparison.OrdinalIgnoreCase);
                 }
             }
+
+            if (isMatch)
+            {
+                matchingItems++;
+            }
+            else
+            {
+                nonMatchingItems++;
+            }
+        }
+    }
+    // --- FIM DA CORREÇÃO ---
+}
             catch (JsonReaderException ex)
             {
                 ModelState.AddModelError("JsonFile", $"Erro fatal de JSON na Linha {ex.LineNumber}, Posição {ex.LinePosition}: {ex.Message}.");

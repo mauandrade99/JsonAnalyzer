@@ -38,14 +38,14 @@
                     <div class="mb-3">
                         <label asp-for="PropertyValueToMatch" class="form-label"><strong>3. Valor para o Match (Opcional):</strong></label>
                         <input asp-for="PropertyValueToMatch" class="form-control" placeholder="Ex: active" value="active">
-                        <small class="form-text text-muted">Use <strong>null</strong> para buscar valores nulos, ou deixe em branco para strings vazias.</small>
+                        <small class="form-text text-muted">Use <strong>|</strong> para separar múltiplos valores (ex: <strong>active|paused</strong>). Use <strong>null</strong> para valores nulos.</small>
                         <span asp-validation-for="PropertyValueToMatch" class="text-danger"></span>
                     </div>
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         <!-- Botão NOVO para abrir o visualizador -->
                         <button id="view-tree-button" type="button" class="btn btn-secondary" data-bs-toggle="offcanvas" data-bs-target="#jsonOffcanvas">
-                            <i class="bi bi-file-earmark-code"></i> Ver Árvore (Arquivos Pequenos)
+                            <i class="bi bi-file-earmark-code"></i> JSON Tree
                         </button>
                         <!-- Botão antigo para análise -->
                         <button id="submit-button" type="submit" class="btn btn-primary">Analisar Arquivo</button>
