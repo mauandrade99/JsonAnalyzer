@@ -2,15 +2,22 @@
 ```markdown
 # High-Performance JSON Analyzer
 
+```
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+```
 
 A powerful and efficient web-based tool built with ASP.NET Core for analyzing massive JSON files. This application is designed to process files hundreds of megabytes in size without overwhelming server memory, by leveraging a streaming-based architecture.
 
 It provides a user-friendly interface to count occurrences of specific properties and values, validate raw JSON text, and visualize data structures in an interactive tree view.
 
-![Screenshot of JsonAnalyzer](https://github.com/mauandrade99/JsonAnalyzer/blob/main/image.png?raw=true)
+```
 
----
+<p align="center">
+  <img src="https://github.com/mauandrade99/JsonAnalyzer/blob/main/image.png?raw=true" width="750">
+</p>
+
+```
+
 
 ## ✨ Key Features
 
