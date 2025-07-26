@@ -12,16 +12,14 @@ namespace AnalisadorJson.Pages
 {
     public class IndexModel : PageModel
     {
-        // --- CONTRATO ALINHADO COM O FORMULÁRIO ---
 
         [BindProperty]
-        [Required(ErrorMessage = "Por favor, selecione um arquivo.")]
+        [Required(ErrorMessage = "Please select a file.")]
         public IFormFile? JsonFile { get; set; }
 
-        [BindProperty, Required(ErrorMessage = "O nome da propriedade é obrigatório.")]
+        [BindProperty, Required(ErrorMessage = "The property name is required.")]
         public string? PropertyNameToCount { get; set; }
         
-        // O valor da busca NÃO é obrigatório, permitindo buscas por strings vazias ou apenas para ver a contagem total.
         [BindProperty] 
         public string? PropertyValueToMatch { get; set; }
 
@@ -29,7 +27,6 @@ namespace AnalisadorJson.Pages
         
         public class JsonValidationModel
         {
-            // O nome da propriedade aqui deve corresponder EXATAMENTE à chave que enviamos no JavaScript.
             public string? jsonText { get; set; }
         }
 
@@ -41,30 +38,24 @@ namespace AnalisadorJson.Pages
 
             if (string.IsNullOrWhiteSpace(jsonText))
             {
-                return new JsonResult(new { isValid = false, error = "A área de texto está vazia." });
+                return new JsonResult(new { isValid = false, error = "The text area is empty." });
             }
 
             try
             {
-                // A MÁGICA DA NEWTONSOFT: Tentamos ler o texto.
-                // Usamos JToken.Parse, que é genérico e aceita tanto objetos {} quanto arrays [].
                 JToken.Parse(jsonText);
-                
-                // Se a linha acima não lançou uma exceção, o JSON é válido!
-                // Retornamos o próprio JSON para o frontend usar na árvore.
                 return new JsonResult(new { isValid = true, json = jsonText });
             }
             catch (JsonReaderException ex)
             {
-                // Se pegarmos uma exceção, o JSON é inválido.
-                // Retornamos uma mensagem de erro precisa para o usuário.
-                string errorMessage = $"JSON inválido. Linha {ex.LineNumber}, Posição {ex.LinePosition}: {ex.Message}";
+
+                string errorMessage = $"JSON not is valid. Line {ex.LineNumber}, Position {ex.LinePosition}: {ex.Message}";
                 return new JsonResult(new { isValid = false, error = errorMessage });
             }
             catch (Exception ex)
             {
                 // Captura outros erros inesperados.
-                return new JsonResult(new { isValid = false, error = $"Ocorreu um erro inesperado: {ex.Message}" });
+                return new JsonResult(new { isValid = false, error = $"An unexpected error occurred: {ex.Message}" });
             }
         }
 
@@ -141,12 +132,12 @@ namespace AnalisadorJson.Pages
             }
             catch (JsonReaderException ex)
             {
-                ModelState.AddModelError("JsonFile", $"Erro fatal de JSON na Linha {ex.LineNumber}, Posição {ex.LinePosition}: {ex.Message}.");
+                ModelState.AddModelError("JsonFile", $" Fatal JSON error on Line {ex.LineNumber}, Position {ex.LinePosition}: {ex.Message}.");
                 return BadRequest(ModelState);
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Ocorreu um erro inesperado: {ex.Message}");
+                ModelState.AddModelError("", $"An unexpected error occurred: {ex.Message}");
                 return BadRequest(ModelState);
             }
 

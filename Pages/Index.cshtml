@@ -6,8 +6,8 @@
 
 
 <div class="text-center">
-    <h1 class="display-4">Analisador Global de Propriedades JSON</h1>
-    <p class="lead">Faça o upload de um arquivo JSON e conte ocorrências de qualquer propriedade em todo o documento.</p>
+    <h1 class="display-4">Global JSON Property Analyzer</h1>
+    <p class="lead">Upload a JSON file and count occurrences of any property throughout the document.</p>
 </div>
 
 <!-- Substitua o <div class="row"> existente por este -->
@@ -16,31 +16,46 @@
     <div class="col-md-6">
         <div class="card card-dynamic-height">
             <div class="card-header">
-                <h3>1. Análise de Arquivo</h3>
+                <h3>1. File Analysis</h3>
             </div>
             <div class="card-body">
                 <form id="analysis-form" method="post" enctype="multipart/form-data">
                     <div id="validation-summary" class="text-danger mb-3"></div>
                     <div class="mb-2">
-                        <label asp-for="JsonFile" class="form-label"><strong>Selecione o arquivo JSON:</strong></label>
-                        <input asp-for="JsonFile" type="file" class="form-control">
-                        <span asp-validation-for="JsonFile" class="text-danger"></span>
-                    </div>
+    <label asp-for="JsonFile" class="form-label"><strong>Select JSON file:</strong></label>
+    
+    <!-- 
+      A ESTRUTURA CORRETA
+      1. Escondemos o input de arquivo real com a classe 'visually-hidden'.
+      2. Criamos um 'input-group' que contém um span (que mostrará o nome do arquivo)
+         e um label (que agirá como nosso botão customizado).
+    -->
+    <div class="input-group">
+      <span id="file-name-display" class="form-control">No file chosen</span>
+      <label class="btn btn-outline-secondary" for="JsonFile">Browse...</label>
+    </div>
+    
+    <!-- O input real está aqui, mas invisível para o usuário. -->
+    <input asp-for="JsonFile" type="file" class="visually-hidden">
+
+    <!-- O span de validação permanece o mesmo. -->
+    <span asp-validation-for="JsonFile" class="text-danger"></span>
+</div>
                     <div class="mb-2">
-                        <label asp-for="PropertyNameToCount" class="form-label"><strong>Propriedade a ser Contada:</strong></label>
+                        <label asp-for="PropertyNameToCount" class="form-label"><strong>Property to Count (Required):</strong></label>
                         <input asp-for="PropertyNameToCount" class="form-control" placeholder="Ex: status, video_id, etc." value="status">
                         <span asp-validation-for="PropertyNameToCount" class="text-danger"></span>
                     </div>
                     <div class="mb-2">
-                        <label asp-for="PropertyValueToMatch" class="form-label"><strong>Valor para o Match:</strong></label>
+                        <label asp-for="PropertyValueToMatch" class="form-label"><strong>Value to Match (Optional):</strong></label>
                         <input asp-for="PropertyValueToMatch" class="form-control" placeholder="Ex: active" value="active">
-                        <small class="form-text text-muted">Use <strong>|</strong> para separar múltiplos valores (ex: <strong>active|paused</strong>). Use <strong>null</strong> para valores nulos.</small>
+                        <small class="form-text text-muted">Use <strong>|</strong> to separate multiple values (e.g., <strong>active|paused</strong>). Use null for null values.</small>
                         <span asp-validation-for="PropertyValueToMatch" class="text-danger"></span>
                     </div>
                     <div id="result-container" class="mt-2"></div>
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 card-button-footer">
                         <button id="view-tree-button" type="button" class="btn btn-secondary" data-bs-toggle="offcanvas" data-bs-target="#jsonOffcanvas">JSON Tree</button>
-                        <button id="submit-button" type="submit" class="btn btn-primary">Analisar Arquivo</button>
+                        <button id="submit-button" type="submit" class="btn btn-primary">Analyze File</button>
                     </div>
                 </form>
             </div>
@@ -52,12 +67,12 @@
     <div class="col-md-6">
          <div class="card card-dynamic-height">
             <div class="card-header">
-                <h3>2. Validador e Visualizador de Texto</h3>
+                <h3>2. Text Validator & Viewer</h3>
             </div>
             <div class="card-body d-flex flex-column">
-                <p>Cole seu JSON aqui para validar a sintaxe e visualizá-lo em árvore.</p>
+                <p> Paste your JSON here to validate its syntax and view it as a tree.</p>
                 <div class="form-group flex-grow-1 d-flex flex-column">
-                    <textarea id="json-input-area" class="form-control flex-grow-1" placeholder="Cole seu JSON aqui..."></textarea>
+                    <textarea id="json-input-area" class="form-control flex-grow-1" placeholder="Paste your JSON here..."></textarea>
                 </div>
                 <div class="d-grid mt-3 card-button-footer">
                     <button id="validate-button" type="button" class="btn btn-success">JSON Tree</button>
@@ -73,15 +88,15 @@
 <!-- === ESTRUTURA DO PAINEL LATERAL (OFFCANVAS) === -->
 <div class="offcanvas offcanvas-end offcanvas-custom-width" tabindex="-1" id="jsonOffcanvas" aria-labelledby="jsonOffcanvasLabel">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="jsonOffcanvasLabel">Visualizador de JSON</h5>
+    <h5 class="offcanvas-title" id="jsonOffcanvasLabel">JSON Viewer</h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
-    <p>Visualizando a estrutura do arquivo selecionado. Expanda os nós para explorar.</p>
+    <p>Viewing the structure of the selected file. Expand the nodes to explore.</p>
     <hr>
     <!-- O visualizador em árvore será injetado aqui pelo JavaScript -->
     <div id="json-tree-container">
-        <small class="text-muted">Selecione um arquivo e clique em "Ver Árvore" para começar.</small>
+        <small class="text-muted">Select a file and click 'JSON Tree' to begin.</small>
     </div>
   </div>
 </div>
@@ -117,7 +132,7 @@
 
                     if (result.isValid) {
                         // SUCESSO! O JSON é válido.
-                        validationResultDiv.innerHTML = '<div class="alert alert-success mt-2">JSON é válido!</div>';
+                        validationResultDiv.innerHTML = '<div class="alert alert-success mt-2">JSON is valid!</div>';
                         
                         // Agora, usamos a lógica da nossa árvore para renderizar o resultado
                         const jsonData = JSON.parse(result.json);
@@ -140,7 +155,7 @@
                     }
 
                 } catch (error) {
-                    validationResultDiv.innerHTML = `<div class="alert alert-danger mt-2">Erro de comunicação com o servidor.</div>`;
+                    validationResultDiv.innerHTML = `<div class="alert alert-danger mt-2">Communication erro with server.</div>`;
                 }
             });
         }
@@ -161,7 +176,7 @@
             validationSummary.innerHTML = '';
             
             button.disabled = true;
-            button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Analisando...';
+            button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Analyzing...';
 
             try {
                 const formData = new FormData(form);
@@ -192,11 +207,11 @@
                     validationSummary.innerHTML = errorHtml;
                 }
             } catch (error) {
-                validationSummary.innerHTML = 'Erro de rede ou falha na comunicação com o servidor.';
+                validationSummary.innerHTML = 'Network error or failure to communicate with the server.';
                 console.error('Fetch error:', error);
             } finally {
                 button.disabled = false;
-                button.innerHTML = 'Analisar Arquivo';
+                button.innerHTML = 'Analyse File';
             }
         });
 
@@ -211,21 +226,13 @@
                 
                 // 1. Verifica se um arquivo foi selecionado.
                 if (fileInput.files.length === 0) {
-                    treeContainer.innerHTML = '<div class="alert alert-warning">Por favor, selecione um arquivo primeiro.</div>';
+                    treeContainer.innerHTML = '<div class="alert alert-warning">Please select a file first.</div>';
                     return; // Para a execução aqui.
                 }
                 
                 const file = fileInput.files[0];
                 
-                // 2. Verifica o tamanho do arquivo para segurança.
-               // const maxSizeInBytes = 100 * 1024 * 1024; // 5 MB
-               // if (file.size > maxSizeInBytes) {
-                //    treeContainer.innerHTML = `<div class="alert alert-danger">O arquivo é muito grande (${(file.size / 1024 / 1024).toFixed(2)} MB) para ser visualizado. </div>`;
-                //    return; // Para a execução aqui.
-                //}
-
-                // 3. Mostra o feedback de carregamento, substituindo o texto padrão.
-                treeContainer.innerHTML = '<div class="d-flex align-items-center"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><strong class="ms-2">Lendo e processando o arquivo...</strong></div>';
+                treeContainer.innerHTML = '<div class="d-flex align-items-center"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><strong class="ms-2">Reading and processing the file...</strong></div>';
 
                 // 4. Cria o leitor de arquivos do navegador.
                 const reader = new FileReader();
@@ -252,17 +259,32 @@
                         
                     } catch (error) {
                         // Lida com erros de JSON inválido.
-                        treeContainer.innerHTML = `<div class="alert alert-danger"><strong>Erro ao processar o JSON:</strong><br>${error.message}</div>`;
+                        treeContainer.innerHTML = `<div class="alert alert-danger"><strong>Error processing JSON:</strong><br>${error.message}</div>`;
                     }
                 };
 
                 // 6. Define o que acontece se a leitura do arquivo falhar.
                 reader.onerror = function() {
-                    treeContainer.innerHTML = `<div class="alert alert-danger">Ocorreu um erro ao tentar ler o arquivo.</div>`;
+                    treeContainer.innerHTML = `<div class="alert alert-danger"> An error occurred while trying to read the file.</div>`;
                 };
                 
                 // 7. Inicia a operação de leitura do arquivo.
                 reader.readAsText(file);
+            });
+        }
+
+        const realFileInput = document.getElementById('JsonFile');
+        const fileNameDisplay = document.getElementById('file-name-display');
+
+        if (realFileInput && fileNameDisplay) {
+            realFileInput.addEventListener('change', function(event) {
+                // Se um arquivo foi selecionado, pega o nome dele.
+                if (event.target.files && event.target.files.length > 0) {
+                    fileNameDisplay.textContent = event.target.files[0].name;
+                } else {
+                    // Se o usuário cancelou, volta para o texto padrão.
+                    fileNameDisplay.textContent = 'No file chosen';
+                }
             });
         }
     </script>
