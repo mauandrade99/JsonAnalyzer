@@ -4,29 +4,37 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - AnalisadorJson</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="icon" href="~/img/favicon.svg" type="image/svg+xml">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/AnalisadorJson.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/vanilla-jsoneditor.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">JSON Analyser</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Analyser</a>
+                        <li class="nav-item"></li>
+                            <a class="nav-link" asp-area="" asp-page="/Index">JSON Analyser</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
                     </ul>
+                     <!-- +++ BOTÃO DE TEMA ADICIONADO AQUI +++ -->
+                    <div class="d-flex">
+                        <button id="theme-toggle-button" class="btn btn-outline-secondary" type="button">
+                            <!-- O ícone será controlado pelo JavaScript -->
+                            <i id="theme-toggle-icon" class="bi bi-moon-fill"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -44,9 +52,62 @@
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<script>
+    (() => {
+        'use strict';
+
+        const getStoredTheme = () => localStorage.getItem('theme');
+        const setStoredTheme = theme => localStorage.setItem('theme', theme);
+
+        const getPreferredTheme = () => {
+            const storedTheme = getStoredTheme();
+            if (storedTheme) {
+                return storedTheme;
+            }
+
+            return 'dark';
+            //window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        };
+
+        const setTheme = theme => {
+            // A mágica do Bootstrap 5: apenas definimos este atributo no elemento <html>
+            document.documentElement.setAttribute('data-bs-theme', theme);
+        };
+
+        const updateToggleButton = (theme) => {
+            const toggleIcon = document.getElementById('theme-toggle-icon');
+            if (toggleIcon) {
+                toggleIcon.classList.toggle('bi-sun-fill', theme === 'dark');
+                toggleIcon.classList.toggle('bi-moon-fill', theme === 'light');
+            }
+        };
+
+        // Aplica o tema imediatamente ao carregar a página para evitar "flash"
+        const currentTheme = getPreferredTheme();
+        setTheme(currentTheme);
+        updateToggleButton(currentTheme);
+
+
+        // Garante que o DOM está pronto antes de adicionar o listener de clique
+        window.addEventListener('DOMContentLoaded', () => {
+            const themeToggleButton = document.getElementById('theme-toggle-button');
+            
+            if (themeToggleButton) {
+                themeToggleButton.addEventListener('click', () => {
+                    const currentTheme = getStoredTheme() || 'light';
+                    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                    setStoredTheme(newTheme);
+                    setTheme(newTheme);
+                    updateToggleButton(newTheme);
+                });
+            }
+        });
+    })();
+</script>
+
+@await RenderSectionAsync("Scripts", required: false)

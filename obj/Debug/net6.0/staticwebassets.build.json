@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "JChR4qG5XahtVXX0z2YMiDTZnFhWpt8b51i1diUrG58=",
+  "Hash": "g4Nt4N8t68dB0QEybtgvdgtXg3Z/grVgDX8SdKu2YBE=",
   "Source": "AnalisadorJson",
   "BasePath": "_content/AnalisadorJson",
   "Mode": "Default",
@@ -85,12 +85,12 @@
       "OriginalItemSpec": "wwwroot\\css\\vanilla-jsoneditor.css"
     },
     {
-      "Identity": "C:\\dotnet\\AnalisadorJson\\wwwroot\\favicon.ico",
+      "Identity": "C:\\dotnet\\AnalisadorJson\\wwwroot\\img\\favicon.svg",
       "SourceId": "AnalisadorJson",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\dotnet\\AnalisadorJson\\wwwroot\\",
       "BasePath": "_content/AnalisadorJson",
-      "RelativePath": "favicon.ico",
+      "RelativePath": "img/favicon.svg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -99,7 +99,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\favicon.ico"
+      "OriginalItemSpec": "wwwroot\\img\\favicon.svg"
     },
     {
       "Identity": "C:\\dotnet\\AnalisadorJson\\wwwroot\\js\\site.js",

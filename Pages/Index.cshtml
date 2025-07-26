@@ -22,25 +22,14 @@
                 <form id="analysis-form" method="post" enctype="multipart/form-data">
                     <div id="validation-summary" class="text-danger mb-3"></div>
                     <div class="mb-2">
-    <label asp-for="JsonFile" class="form-label"><strong>Select JSON file:</strong></label>
-    
-    <!-- 
-      A ESTRUTURA CORRETA
-      1. Escondemos o input de arquivo real com a classe 'visually-hidden'.
-      2. Criamos um 'input-group' que contém um span (que mostrará o nome do arquivo)
-         e um label (que agirá como nosso botão customizado).
-    -->
-    <div class="input-group">
-      <span id="file-name-display" class="form-control">No file chosen</span>
-      <label class="btn btn-outline-secondary" for="JsonFile">Browse...</label>
-    </div>
-    
-    <!-- O input real está aqui, mas invisível para o usuário. -->
-    <input asp-for="JsonFile" type="file" class="visually-hidden">
-
-    <!-- O span de validação permanece o mesmo. -->
-    <span asp-validation-for="JsonFile" class="text-danger"></span>
-</div>
+                        <label asp-for="JsonFile" class="form-label"><strong>Select JSON file:</strong></label>
+                        <div class="input-group">
+                        <span id="file-name-display" class="form-control">No file chosen</span>
+                        <label class="btn btn-outline-secondary" for="JsonFile">Browse...</label>
+                        </div>
+                        <input asp-for="JsonFile" type="file" class="visually-hidden">
+                        <span asp-validation-for="JsonFile" class="text-danger"></span>
+                    </div>
                     <div class="mb-2">
                         <label asp-for="PropertyNameToCount" class="form-label"><strong>Property to Count (Required):</strong></label>
                         <input asp-for="PropertyNameToCount" class="form-control" placeholder="Ex: status, video_id, etc." value="status">

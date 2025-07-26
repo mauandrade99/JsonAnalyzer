@@ -25,9 +25,6 @@ body {
 .card-dynamic-height {
   height: calc(80vh - 100px);
 }
-.card-dynamic-height form  {
-  height : 100%;
-}
 .card-dynamic-height .card-body form  {
   display: flex;
   flex-direction: column;
@@ -40,7 +37,6 @@ body {
   width: 100%;     
   padding: 1rem;  
   border-top: 0px solid #dee2e6; 
-  background-color: white; 
 }
 
 .card-dynamic-height .card-body {
