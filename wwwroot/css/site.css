@@ -18,7 +18,32 @@ body {
 }
 
 .offcanvas-custom-width {
-        --bs-offcanvas-width: 60vw; 
-        min-width: 600px;
-        max-width: 1000px; 
-    }
+  --bs-offcanvas-width: 60vw; 
+  min-width: 600px;
+  max-width: 1000px; 
+}
+.card-dynamic-height {
+  height: calc(80vh - 100px);
+}
+.card-dynamic-height form  {
+  height : 100%;
+}
+.card-dynamic-height .card-body form  {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-button-footer {
+  position: absolute;
+  bottom: 0;       
+  left: 0;        
+  width: 100%;     
+  padding: 1rem;  
+  border-top: 0px solid #dee2e6; 
+  background-color: white; 
+}
+
+.card-dynamic-height .card-body {
+  padding-bottom: 90px; 
+  overflow-y: auto; 
+}
