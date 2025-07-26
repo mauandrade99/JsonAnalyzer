@@ -8,7 +8,7 @@ A powerful and efficient web-based tool built with ASP.NET Core for analyzing ma
 
 It provides a user-friendly interface to count occurrences of specific properties and values, validate raw JSON text, and visualize data structures in an interactive tree view.
 
-![alt text](image.png)
+![Screenshot of JsonAnalyzer](https://raw.githubusercontent.com/mauandrade99/JsonAnalyzer/main/image.png)
 
 ---
 
